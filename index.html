@@ -249,6 +249,65 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <h2>Elasticsearch et PHP</h2>
         </section>
 
+
+        <section>
+            <h2>Les clients PHP</h2>
+
+            <ul>
+                <li><a href="https://github.com/ruflin/Elastica">Elastica</a></li>
+                <li><a href="http://sherlockphp.com/">SherlockPHP</a></li>
+                <li><a href="https://github.com/nervetattoo/elasticsearch">Nervattoo/Elasticsearch</a></li>
+                <li><a href="https://github.com/elasticsearch/elasticsearch-php">Le client officiel</a></li>
+                <li><a href="https://github.com/ariskemper/celastica">CElastica</a> en Zephir</li>
+            </ul>
+
+            <p class="footnote"><a href="http://jolicode.com/blog/elasticsearch-php-clients-test-drive">Comparatif plus complet ici <small>(oui, auto-promo)</small></a></p>
+
+            <aside class="notes">
+                Sherlock abondonné. Nervatattoo bof, client officiel cool mais bas niveau.
+            </aside>
+        </section>
+
+        <section>
+            <h1 class="no-caps">Elastica</h1>
+
+            <ul>
+                <li>Créé en octobre 2010 par <span class="emphasis">Nicolas Ruflin</span> ;</li>
+                <li>Documentation sur <a href="http://elastica.io">Elastica.io</a> ;</li>
+                <li>Testé, maintenue activement, compatible ES 1.1 ;</li>
+                <li>Interface object par dessus Elasticsearch.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Tout est objet</h2>
+
+            <ul>
+                <li>Index</li>
+                <li>Type</li>
+                <li>Query</li>
+                <li>Document</li>
+                <li>ResultSet</li>
+            </ul>
+        </section>
+
+        <section data-background="./images/hellfest2009.jpg">
+            <aside class="notes">Notre fil rouge</aside>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Notre Document</h2>
+
+            <p>Chaque prestation d'artiste est un document.</p>
+
+            <ul>
+                <li>Édition du festival ;</li>
+                <li>Artiste ;</li>
+                <li>Scéne ;</li>
+                <li>Des métas données sur l'artiste (tags, genre, auditeurs).</li>
+            </ul>
+        </section>
+
         <section>
             <h5 class="no-caps">Crédits</h5>
 
