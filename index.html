@@ -129,13 +129,132 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
                 <li>Stockage de documents JSON sans mapping ;</li>
                 <li>Interface REST ;</li>
                 <li>Distribué et scalable horizontalement ;</li>
-                <li>Open source, en Java ;</li>
+                <li>Open source, en Java <span class="fragment emphasis">¯\_(ツ)_/¯</span></li>
                 <li>Zéro configuration.</li>
+                <li class="fragment"><em>Ah et c'est Elasticsearch, pas Elastic<span class="emphasis">S</span>earch.</em></li>
             </ul>
         </section>
 
         <section>
             <img src="./images/github-annoted.png" alt="Github search" class="stretch"/>
+
+            <aside class="notes">
+                Mais aussi pagination, suggestion...
+            </aside>
+        </section>
+
+        <section>
+            <h5>Les problèmatiques</h5>
+
+            <h2>Construction des documents</h2>
+
+            <ul>
+                <li>Sérialisation JSON ;</li>
+                <li>Dénormalisation.</li>
+            </ul>
+
+            <pre><code>{
+    "content": "Yolo",
+    "created_by": {
+        "name": "Damin0u"
+    }
+}</code></pre>
+
+            <aside class="notes">La dénormalisation va impacter vos capacités à effectuer des recherches,
+            on veut pas exemple le USER dans le FICHIER.</aside>
+        </section>
+
+        <section>
+            <h5>Les problèmatiques</h5>
+
+            <h2>Tokenization</h2>
+
+            <p>
+                <img src="./images/tolkien.jpg" alt="Tolkienization"/>
+            </p>
+            <p>
+                Rien à voir avec Tolkien.
+            </p>
+        </section>
+
+        <section>
+            <h5>Les problèmatiques</h5>
+
+            <h2>Tokenization</h2>
+
+            <p>
+                Séparer les contenus en morceaux facile à trouver.
+            </p>
+
+            <ul>
+                <li>J'aime les baguettes ;</li>
+                <li>[J'aime] [les] [baguettes] ;</li>
+                <li>[aime] [les] [baguet] ;</li>
+                <li class="emphasis">[aime] [baguet]</li>
+            </ul>
+
+            <aside class="notes">
+                La plus simple reste les espaces, chaque "mot" devient un token.
+                Varie en fonction de la langue de vos contenus.
+            </aside>
+        </section>
+
+        <section>
+            <h5>Les problèmatiques</h5>
+
+            <h2>L'indexation</h2>
+
+            <pre><code>curl -XPOST "http://localhost:9200/yolo/test/1" -d '
+{
+    "post_date": "2013/10/30 13:37:00",
+    "content": "Elasticsearch is swag.",
+    "author": {
+        "name": "Damien",
+    }
+}'</code></pre>
+
+            <ul>
+                <li>Temps réel ?</li>
+                <li>Combien de temps pour tout réindexer ?</li>
+            </ul>
+
+            <aside class="notes">
+                La plus simple reste les espaces, chaque "mot" devient un token.
+            </aside>
+        </section>
+
+        <section>
+            <h5>Les problèmatiques</h5>
+
+            <h2>La recherche</h2>
+
+            <pre><code>curl -XPOST 'http://localhost:9200/yolo/test/_search?pretty=true' -d '
+{
+    "query": {
+        "match_all" : {}
+    }
+}'</code></pre>
+
+            <ul>
+                <li>Votre mapping va l'influencer ;</li>
+                <li>Utilisation du Query DSL.</li>
+            </ul>
+
+            <aside class="notes">
+                Toujours écrire ces requêtes en JSON avant de jouer en PHP.
+            </aside>
+        </section>
+
+        <section data-background="./images/php.jpg">
+            <h2>Elasticsearch et PHP</h2>
+        </section>
+
+        <section>
+            <h5 class="no-caps">Crédits</h5>
+
+            <p>
+                <a href="http://www.deviantart.com/art/PHP-Weapons-38526422">PHP Weapon</a>
+            </p>
         </section>
     </div>
 </div>
