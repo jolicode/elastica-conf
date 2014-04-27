@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Elastica, la recheche facile avec PHP et Elasticsearch</title>
+    <title>Elastica, la recherche facile avec PHP et Elasticsearch</title>
 
     <meta name="description" content="Elastica, la recheche facile avec PHP et Elasticsearch">
     <meta name="author" content="JoliCode - Damien ALEXANDRE">
@@ -75,6 +75,8 @@
             <ul>
                 <li>Todo</li>
             </ul>
+
+            <p>On a plein de sujets à traiter en 45min.</p>
         </section>
 
         <section>
@@ -254,17 +256,19 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <h2>Les clients PHP</h2>
 
             <ul>
-                <li><a href="https://github.com/ruflin/Elastica">Elastica</a></li>
-                <li><a href="http://sherlockphp.com/">SherlockPHP</a></li>
-                <li><a href="https://github.com/nervetattoo/elasticsearch">Nervattoo/Elasticsearch</a></li>
-                <li><a href="https://github.com/elasticsearch/elasticsearch-php">Le client officiel</a></li>
-                <li><a href="https://github.com/ariskemper/celastica">CElastica</a> en Zephir</li>
+                <li><a href="https://github.com/ruflin/Elastica">Elastica</a> ;</li>
+                <li><a href="http://sherlockphp.com/">SherlockPHP</a> ;</li>
+                <li><a href="https://github.com/nervetattoo/elasticsearch">Nervattoo/Elasticsearch</a> ;</li>
+                <li><a href="https://github.com/elasticsearch/elasticsearch-php">Le client officiel</a> ;</li>
+                <li><a href="https://github.com/ariskemper/celastica">CElastica</a> en Zephir.</li>
             </ul>
 
             <p class="footnote"><a href="http://jolicode.com/blog/elasticsearch-php-clients-test-drive">Comparatif plus complet ici <small>(oui, auto-promo)</small></a></p>
 
             <aside class="notes">
                 Sherlock abondonné. Nervatattoo bof, client officiel cool mais bas niveau.
+
+                Elastica a un super bundle pour SF2 mais c'est pas le sujet.
             </aside>
         </section>
 
@@ -283,12 +287,16 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <h2>Tout est objet</h2>
 
             <ul>
-                <li>Index</li>
-                <li>Type</li>
-                <li>Query</li>
-                <li>Document</li>
-                <li>ResultSet</li>
+                <li>Index ;</li>
+                <li>Type ;</li>
+                <li>Query ;</li>
+                <li>Document ;</li>
+                <li>ResultSet.</li>
             </ul>
+
+            <aside class="notes">
+                Index=Database, Type=Table, Document=Row
+            </aside>
         </section>
 
         <section data-background="./images/hellfest2009.jpg">
@@ -298,7 +306,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
         <section>
             <h2 class="no-caps">Notre Document</h2>
 
-            <p>Chaque prestation d'artiste est un document.</p>
+            <p>Chaque prestation d'un artiste est un document :</p>
 
             <ul>
                 <li>Édition du festival ;</li>
@@ -306,6 +314,127 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
                 <li>Scéne ;</li>
                 <li>Des métas données sur l'artiste (tags, genre, auditeurs).</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>En SQL normalisé</h2>
+
+            <img src="./images/database.png" alt="DB Hellfest" class="stretch no-border"/>
+        </section>
+
+        <section>
+            <h2>Dénormalisé</h2>
+
+            <pre><code>{
+    name: "Black Sabbath",
+    listeners: 2128492,
+    description: "Black Sabbath is an English heavy...",
+    festival: "Hellfest 2014",
+    year: 2014,
+    date: "2014, Sunday 22 June",
+    stage: "Main Stage 01",
+    tags: [
+        "heavy metal",
+        "hard rock",
+        "classic rock",
+        "metal"
+    ]
+}</code></pre>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Oubliez vos<br />FOREIGN KEY !</h2>
+        </section>
+
+        <section>
+            <h2>Installation</h2>
+
+            <pre><code>composer require ruflin/Elastica dev-master</code></pre>
+
+            <pre><code class="no-highlight">./composer.json has been updated
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+- Installing ruflin/elastica (dev-master 62f63df)
+Cloning 62f63df4d093f325b6848fa0bedae23da6ece3d7</code></pre>
+        </section>
+
+        <section>
+            <h2>Créer notre Index</h2>
+            <h6>Database pour les SQL-addict</h6>
+
+            <pre><code class="lang-php">&lt;?php
+include("vendor/autoload.php");
+
+// default to localhost:9200, no config!
+$elasticaClient = new \Elastica\Client();
+
+/** @var $festivalIndex \Elastica\Index */
+$festivalIndex = $elasticaClient->getIndex('festival');
+
+$festivalIndex->exists(); // => false</code></pre>
+        </section>
+
+        <section>
+            <h2>Créer notre Index</h2>
+
+            <pre><code class="lang-php">&lt;?php
+
+$festivalIndex->create(
+    array(
+        'number_of_shards' => 1,
+        'number_of_replicas' => 0,
+        // Analysis here too
+    ),
+    true // delete index if it already exist
+);</code></pre>
+        </section>
+
+        <section>
+            <h2>Créer notre Type</h2>
+            <h6>Table pour les SQL-addict</h6>
+
+            <pre><code class="lang-php">/** @var $hellfestType \Elastica\Type */
+$hellfestType = $festivalIndex->getType('hellfest');</code></pre>
+
+            <aside class="notes">Ça ne crée pas vraiment le type... hihi Mapping ici.</aside>
+        </section>
+
+        <section>
+            <h2>Indexer nos documents</h2>
+
+            <pre><code class="lang-php">$gigs = json_decode(file_get_contents("data-merged.json"), true);
+
+// Slow
+foreach ($gigs as $gig) {
+    $hellfestType->addDocument(
+        new \Elastica\Document('', $gig)
+    );
+}</code></pre>
+
+            <p>Une requête HTTP par Document !</p>
+
+            <aside class="notes">Dénormalisation déjà faite.
+
+            Perf horrible.</aside>
+        </section>
+
+        <section>
+            <h2>Bulk indexing !</h2>
+
+            <pre><code class="lang-php">$docs = array();
+
+foreach ($gigs as $gig) {
+    $docs[] = new \Elastica\Document('', $gig);
+}
+
+// Only one request!
+$hellfestType->addDocuments($docs);</code></pre>
+
+            <p>Créez des bulks de taille raisonnable et abusez-en.</p>
+
+            <aside class="notes">
+                Comme en SQL, on peux faire des INSERT multiple
+            </aside>
         </section>
 
         <section>
@@ -319,7 +448,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
 </div>
 
 <footer class="joli">
-    Elastica, la recheche facile avec PHP et Elasticsearch - PHP Tour 2014 - <img src="lib/font/logo-fond-noir.svg" style="height:1em; vertical-align: text-bottom;" /> 2014
+    Elastica, la recherche facile avec PHP et Elasticsearch - PHP Tour 2014 - <img src="lib/font/logo-fond-noir.svg" style="height:1em; vertical-align: text-bottom;" /> 2014
 </footer>
 
 <script src="lib/js/head.min.js"></script>
