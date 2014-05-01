@@ -1,0 +1,34 @@
+# All the queries for live demo
+
+GET festival/hellfest/_search
+{
+  "query": {
+    "match": {
+      "name": "slayer"
+    }
+  }
+}
+
+
+GET festival/hellfest/_search
+{
+  "query": {
+    "match": {
+      "name": "motörhead"
+    }
+  }
+}
+
+
+GET festival/hellfest/_search
+{
+  "query": {
+    "match": {
+      "name": "motorhead"
+    }
+  }
+}
+
+
+GET /festival/_analyze?text=motörhead
+GET /festival/_analyze?text=motorhead
