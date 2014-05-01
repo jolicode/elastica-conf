@@ -170,40 +170,6 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             on veut pas exemple le USER dans le FICHIER.</aside>
         </section>
 
-        <section>
-            <h5>Les problèmatiques</h5>
-
-            <h2>Tokenization</h2>
-
-            <p>
-                <img src="./images/tolkien.jpg" alt="Tolkienization"/>
-            </p>
-            <p>
-                Rien à voir avec Tolkien.
-            </p>
-        </section>
-
-        <section>
-            <h5>Les problèmatiques</h5>
-
-            <h2>Tokenization</h2>
-
-            <p>
-                Séparer les contenus en morceaux facile à trouver.
-            </p>
-
-            <ul>
-                <li>J'aime les baguettes ;</li>
-                <li>[J'aime] [les] [baguettes] ;</li>
-                <li>[aime] [les] [baguet] ;</li>
-                <li class="emphasis">[aime] [baguet]</li>
-            </ul>
-
-            <aside class="notes">
-                La plus simple reste les espaces, chaque "mot" devient un token.
-                Varie en fonction de la langue de vos contenus.
-            </aside>
-        </section>
 
         <section>
             <h5>Les problèmatiques</h5>
@@ -626,8 +592,6 @@ Hellfest 2014</code></pre>
         </section>
 
         <section>
-            <h2>Petit soucis</h2>
-
             <pre><code class="lang-php">$matchQuery->setField('name', 'Motörhead');
 $resultSet = $hellfestType->search($matchQuery);
 
@@ -646,7 +610,103 @@ echo sprintf("Motorhead a fait %d Hellfest\n",
         </section>
 
         <section>
-            <h2>La tolkienisation!!</h2>
+            <h2>WTF</h2>
+
+            <h3 class="no-caps emphasis">Motorhead != Motörhead</h3>
+        </section>
+
+        <section data-background="images/lords.jpg">
+            <h2>Tokenization</h2>
+
+            <p>
+                <img src="./images/tolkien.jpg" alt="Tolkienization"/>
+            </p>
+            <p>
+                Rien à voir avec Tolkien.
+            </p>
+        </section>
+
+        <section>
+            <h2>Tokenization</h2>
+
+            <p>
+                Séparer les contenus en morceaux facile à trouver.
+            </p>
+
+            <ul>
+                <li>J'aime les baguettes ;</li>
+                <li>[J'aime] [les] [baguettes] ;</li>
+                <li>[aime] [les] [baguet] ;</li>
+                <li class="emphasis">[aime] [baguet]</li>
+            </ul>
+
+            <aside class="notes">
+                La plus simple reste les espaces, chaque "mot" devient un token.
+                Varie en fonction de la langue de vos contenus.
+            </aside>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Motörhead</h2>
+
+            <ul>
+                <li>Analyse par défaut: [motörhead]</li>
+                <li>Analyse avec asciifolding: [motorhead]</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Créer un Analyzer custom</h2>
+
+        <pre style="font-size: 0.7em; background-color: #3F3F3F;"><span class="emphasis">$festivalIndex</span>->create(array(
+    'number_of_shards' => 1,
+    'number_of_replicas' => 0,
+    'analysis' => array(
+      'analyzer' => array(<strong class="emphasis">
+        'my_awesome_analyzer' => array(
+          'type' => 'custom',
+          'tokenizer' => 'standard',
+          'filter' => array('lowercase', 'asciifolding')
+        ),</strong>
+      )
+    )
+  ),
+  true
+);</pre>
+
+            <aside class="notes">
+                Ça se fait au niveau de l'index
+            </aside>
+        </section>
+
+        <section>
+            <h2>Créer un mapping explicite</h2>
+
+            <pre><code class="lang-php">$mapping = new \Elastica\Type\Mapping();
+$mapping->setType($hellfestType);
+
+$mapping->setProperties(array(
+  'name'          => array(
+      'type'          => 'string',
+      'analyzer'      => 'my_awesome_analyzer',
+      'boost'         => 3
+  ),
+  'description'   => array('type' => 'string', 'analyzer' => 'my_awesome_analyzer'),
+  'tag'           => array('type' => 'string', 'boost' => 2, 'index' => 'not_analyzed'),
+));
+
+$mapping->send();</code></pre>
+        </section>
+
+        <section>
+            <h2>Fin du problème !</h2>
+            <pre><code class="lang-php">$matchQuery->setField('name', 'Motorhead');
+$resultSet = $hellfestType->search($matchQuery);
+
+echo sprintf("Motorhead a fait %d Hellfest\n",
+$resultSet->getTotalHits());</code></pre>
+
+            <h5>Motorhead a fait 3 Hellfest</h5>
         </section>
 
         <section>
