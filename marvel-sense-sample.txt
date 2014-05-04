@@ -30,5 +30,46 @@ GET festival/hellfest/_search
 }
 
 
+# Do not play in Marvel
+
 GET /festival/_analyze?text=motörhead
 GET /festival/_analyze?text=motorhead
+
+GET /festival_mapping/_analyze?text=motörhead
+GET /festival_mapping/_analyze?text=motorhead
+
+
+# Complex query with boolean in the mapping!
+
+GET festival_mapping/hellfest/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "tags": {
+              "value": "progressive metal"
+            }
+          }
+        },
+        {
+          "term": {
+            "year": {
+              "value": 2014
+            }
+          }
+        }
+      ],
+      "must_not": [
+        {
+          "term": {
+            "tags": {
+              "value": "grindcore"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

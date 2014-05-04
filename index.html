@@ -705,7 +705,7 @@ $mapping->setProperties(array(
       'boost'         => 3
   ),
   'description'   => array('type' => 'string', 'analyzer' => 'my_awesome_analyzer'),
-  'tag'           => array('type' => 'string', 'boost' => 2, 'index' => 'not_analyzed'),
+  'tags'          => array('type' => 'string', 'boost' => 2, 'index' => 'not_analyzed'),
 ));
 
 $mapping->send();</code></pre>
@@ -717,19 +717,126 @@ $mapping->send();</code></pre>
 $resultSet = $hellfestType->search($matchQuery);
 
 echo sprintf("Motorhead a fait %d Hellfest\n",
-$resultSet->getTotalHits());</code></pre>
+    $resultSet->getTotalHits());</code></pre>
 
             <h5>Motorhead a fait 3 Hellfest <span class="no-caps">\m/</span></h5>
+        </section>
+
+        <section>
+            <h2>Recherche par goût</h2>
+
+            <p>
+                J'aime le <strong class="emphasis">progressive metal</strong> mais je déteste
+                le <strong class="emphasis">grindcore</strong>,
+                quel groupe dois-je aller voir en 2014&nbsp;?
+            </p>
+        </section>
+
+        <section>
+            <h2>Rappel du mapping</h2>
+
+            <pre><code class="lang-php">'tags' => array(
+    'type' => 'string',
+    'boost' => 2,
+    'index' => 'not_analyzed'
+),</code></pre>
+
+            <p>
+                <strong class="emphasis">not_analyzed</strong> est parfait pour un tag.
+            </p>
+        </section>
+
+        <section>
+            <h2>Plein de Query</h2>
+
+            <ul>
+                <li>Possède <strong class="emphasis">progressive metal</strong> dans le champ <strong class="emphasis">tags</strong> ;</li>
+                <li>Ne possède pas <strong class="emphasis">grindcore</strong> dans le champ <strong class="emphasis">tags</strong> ;</li>
+                <li>Possède <strong class="emphasis">2014</strong> dans le champ <strong class="emphasis">year</strong>.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Term Query</h2>
+
+            <pre><code class="lang-json">{
+  "term": {
+    "tags": {
+      "value": "progressive metal"
+    }
+  }
+}</code></pre>
+
+            <pre><code class="lang-json">{
+  "term": {
+    "year": {
+      "value": 2014
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Bool Query</h2>
+
+            <pre><code class="lang-json">{
+    "bool": {
+        "must": [
+            // Queries to match
+        ],
+        "must_not": [
+            // Queries to not match
+        ]
+    }
+}</code></pre>
+        </section>
+
+        <section>
+            <h3>Traduction avec Elastica</h3>
+            <pre><code class="lang-php">$progressiv = new \Elastica\Query\Term(array(
+    'tags' => array('value' => 'progressive metal')
+));
+
+$year = new \Elastica\Query\Term(array(
+    'year' => array('value' => 2014)
+));
+
+$grindcore = new \Elastica\Query\Term(array(
+    'tags' => array('value' => 'grindcore')
+));</code></pre>
+            <pre><code class="lang-php">$boolQuery = new \Elastica\Query\Bool();
+
+$boolQuery->addMust($progressiv);
+$boolQuery->addMust($year);
+$boolQuery->addMustNot($grindcore);
+
+$resultSet = $hellfestMappingType->search($boolQuery);
+echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTotalHits(), 2014);
+</code></pre>
+        </section>
+
+        <section>
+            <ol>
+                <li>Angra</li>
+                <li>Enslaved</li>
+                <li>Opeth</li>
+                <li>Protest the Hero</li>
+                <li>Sólstafir</li>
+            </ol>
+
+            <p>
+                <img src="images/headbang.gif" alt="Headbang!!" class="no-border" style="width: 80%" />
+            </p>
+        </section>
+
+        <section>
+            <p>Cool, jouer avec aggr et recherche now!</p>
         </section>
 
         <section>
             <h2>Merci !</h2>
 
             <p>Todo: Headbang gif</p>
-        </section>
-
-        <section>
-            <p>Cool, jouer avec aggr et recherche now!</p>
         </section>
 
         <section>
