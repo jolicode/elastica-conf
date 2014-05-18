@@ -73,39 +73,53 @@
         </section>
 
         <section>
-            <h1>Plan</h1>
+            <h2 class="no-caps">Plan <del>du site</del></h2>
 
             <ul>
-                <li>Todo</li>
+                <li>Qu'est ce que la recherche ;</li>
+                <li>Présentation rapide d'Elasticsearch ;</li>
+                <li>Elastica ♥ et exemples <code style="text-decoration: underline">avec du code !</code>
+                    <ul style="line-height: 0.8em; font-size: 0.8em;">
+                        <li>Fil rouge ;</li>
+                        <li>Indexer ;</li>
+                        <li>Rechercher ;</li>
+                        <li>Définir un mapping ;</li>
+                        <li>Jouer avec les aggrégations.</li>
+                    </ul>
+                </li>
+                <li>Pro-tips ©</li>
+                <li>Free Hugs.</li>
             </ul>
-
-            <p>On a plein de sujets à traiter en 45min.</p>
-
-            <p>La documentation qu'Elastica devrait avoir !</p>
         </section>
 
         <section>
-            <h1>On ne parlera pas de</h1>
+            <h2 class="no-caps">Ce dont nous ne parlerons pas</h2>
 
             <ul>
-                <li>L'installation ;</li>
-                <li>Le monitoring ;</li>
-                <li>Le scaling / les nodes ;</li>
+                <li>L'installation (RTFM) ;</li>
+                <li>Le scaling, les nodes, les shards, les replicas ;</li>
+                <li>Le monitoring, marvel ;</li>
+                <li>L'indexation temps réel ;</li>
+                <li>L'utilisation en PDS ;</li>
+                <li>La conception de requêtes pertinentes ;</li>
+                <li>La mise en production...</li>
             </ul>
 
-            <p>Pas de le temps !</p>
+            <h3>Le temps nous est compté.</h3>
         </section>
 
         <section>
             <h2>La recherche</h2>
 
-            <h3>Les <abbr title="Système de gestion de base de données">SGBD</abbr> ne savent pas faire</h3>
+            <h3 class="no-caps">Les <abbr title="Système de gestion de base de données">SGBD</abbr> ne savent pas faire</h3>
+
             <ul>
-                <li>pas d'agrégation ;</li>
                 <li>lenteur proportionnelle à la taille des données ;</li>
                 <li>pertinence complexe à calculer ;</li>
-                <li>pas de scalling ;</li>
+                <li>pas de scalling (vertical seulement) ;</li>
                 <li>index à créer manuellement ;</li>
+                <li>pas d'agrégation ;</li>
+                <li>pas leur boulôt.</li>
             </ul>
         </section>
 
@@ -115,7 +129,7 @@
             <pre><code>"(($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')
 OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
 
-            <blockquote class="fragment">
+            <blockquote>
                 WordPress has killer search baked in. Every word you write is fully searchable […]
             </blockquote>
 
@@ -131,7 +145,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             </aside>
         </section>
 
-        <section>
+        <section data-background="./images/awesome.jpg">
             <h2>Introducing</h2>
 
             <img src="images/elasticsearch.png" alt="Elasticsearch" class="stretch no-border" />
@@ -145,6 +159,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <h2>En 2 mots</h2>
 
             <ul>
+                <li>Lucene on steroïdes ;</li>
                 <li>Stockage de documents JSON sans mapping ;</li>
                 <li>Interface REST ;</li>
                 <li>Distribué et scalable horizontalement ;</li>
@@ -163,14 +178,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
         </section>
 
         <section>
-            <h5>Les problèmatiques</h5>
-
-            <h2>Construction des documents</h2>
-
-            <ul>
-                <li>Sérialisation JSON ;</li>
-                <li>Dénormalisation.</li>
-            </ul>
+            <h2>Documents JSON</h2>
 
             <pre><code>{
     "content": "Yolo",
@@ -183,11 +191,18 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             on veut pas exemple le USER dans le FICHIER.</aside>
         </section>
 
+        <section>
+            <h2>Index et type</h2>
+
+            <p>
+                Nous stockons les documents dans des types, eux mêmes inclus dans un index.
+            </p>
+
+            <pre><code>http://localhost:9200/yolo/test/1</code></pre>
+        </section>
 
         <section>
-            <h5>Les problèmatiques</h5>
-
-            <h2>L'indexation</h2>
+            <h2>Indexation via POST</h2>
 
             <pre><code>curl -XPOST "http://localhost:9200/yolo/test/1" -d '
 {
@@ -198,19 +213,12 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
     }
 }'</code></pre>
 
-            <ul>
-                <li>Temps réel ?</li>
-                <li>Combien de temps pour tout réindexer ?</li>
-            </ul>
-
             <aside class="notes">
                 La plus simple reste les espaces, chaque "mot" devient un token.
             </aside>
         </section>
 
         <section>
-            <h5>Les problèmatiques</h5>
-
             <h2>La recherche</h2>
 
             <pre><code>curl -XPOST 'http://localhost:9200/yolo/test/_search?pretty=true' -d '
@@ -219,11 +227,6 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
         "match_all" : {}
     }
 }'</code></pre>
-
-            <ul>
-                <li>Votre mapping va l'influencer ;</li>
-                <li>Utilisation du Query DSL.</li>
-            </ul>
 
             <aside class="notes">
                 Toujours écrire ces requêtes en JSON avant de jouer en PHP.
@@ -282,12 +285,16 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             </aside>
         </section>
 
+        <section>
+            <h1 class="no-caps">Fil rouge</h1>
+        </section>
+
         <section data-background="./images/hellfest2009.jpg">
             <aside class="notes">Notre fil rouge</aside>
         </section>
 
         <section>
-            <h2 class="no-caps">Notre Document</h2>
+            <h2>Concerts au Hellfest</h2>
 
             <p>Chaque prestation d'un artiste est un document :</p>
 
@@ -334,7 +341,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
 
             <pre><code>composer require ruflin/Elastica dev-master</code></pre>
 
-            <pre><code class="no-highlight">./composer.json has been updated
+            <pre><code class="no-highlight fragment">./composer.json has been updated
 Loading composer repositories with package information
 Updating dependencies (including require-dev)
 - Installing ruflin/elastica (dev-master 62f63df)
@@ -389,9 +396,11 @@ $hellfestType = $festivalIndex->getType('hellfest');</code></pre>
 
 // Slow
 foreach ($gigs as $gig) {
+
     $hellfestType->addDocument(
         new \Elastica\Document('', $gig)
     );
+
 }</code></pre>
 
             <p>Une requête HTTP par Document !</p>
@@ -589,9 +598,7 @@ Hellfest 2014</code></pre>
         </section>
 
         <section data-background="images/slayer.jpg">
-            <h2>Conclusion</h2>
-
-            <h5>Slayer est un groupe d'habitués :)</h5>
+            <h2>Slayer est donc un groupe d'habitués :)</h2>
 
             <p class="footnote" style="padding-top: 6em;">Et Elastica c'est facile...</p>
         </section>
@@ -605,27 +612,30 @@ Hellfest 2014</code></pre>
         </section>
 
         <section>
-            <pre><code class="lang-php">$matchQuery->setField('name', 'Motörhead');
-$resultSet = $hellfestType->search($matchQuery);
 
-echo sprintf("Motörhead a fait %d Hellfest\n",
-                $resultSet->getTotalHits());</code></pre>
-
-            <h5 class="fragment">Motörhead a fait 3 Hellfest</h5>
-
-            <pre class="fragment"><code class="lang-php">$matchQuery->setField('name', 'Motorhead');
+            <pre><code class="lang-php">$matchQuery->setField('name', 'Motorhead');
 $resultSet = $hellfestType->search($matchQuery);
 
 echo sprintf("Motorhead a fait %d Hellfest\n",
-                $resultSet->getTotalHits());</code></pre>
+$resultSet->getTotalHits());</code></pre>
 
             <h5 class="fragment">Motorhead a fait 0 Hellfest</h5>
+
+            <pre class="fragment"><code class="lang-php">$matchQuery->setField('name', 'Motörhead');
+$resultSet = $hellfestType->search($matchQuery);
+
+echo sprintf("Motörhead a fait %d Hellfest\n",
+$resultSet->getTotalHits());</code></pre>
+
+            <h5 class="fragment">Motörhead a fait 3 Hellfest</h5>
         </section>
 
         <section>
             <h2>WTF</h2>
 
             <h3 class="no-caps emphasis">Motorhead != Motörhead</h3>
+
+            <img src="images/wtf.gif" alt="wtf" class="no-border" style="width: 80%" />
         </section>
 
         <section data-background="images/lords.jpg">
@@ -666,6 +676,8 @@ echo sprintf("Motorhead a fait %d Hellfest\n",
                 <li>Analyse par défaut: [motörhead]</li>
                 <li>Analyse avec asciifolding: [motorhead]</li>
             </ul>
+
+            <h5 class="no-caps" style="margin-top: 1em;">À appliquer à l'indexation <span class="emphasis">ET</span> à la recherche.</h5>
         </section>
 
         <section>
@@ -835,16 +847,23 @@ echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTo
 
         <section>
             <h2>Merci !</h2>
+            <h5 class="no-caps">@damienalexandre</h5>
+
+            <h3 class="no-caps">Je n'accepte que les questions formattés en JSON.</h3>
+
 
             <p>Todo: Headbang gif</p>
+
         </section>
 
         <section>
-            <h5 class="no-caps">Crédits</h5>
+            <h5 class="no-caps">Crédits photos</h5>
 
             <p>
                 <a href="http://www.deviantart.com/art/PHP-Weapons-38526422">PHP Weapon</a> /
+                <a href="http://sharpwriter.deviantart.com/art/Welcome-to-the-Internet-Please-Follow-me-322248378">Internet unicorn</a> /
                 <a href="http://rodriguezvillegas.deviantart.com/art/Slayer-1-240975635">Slayer</a> /
+                <a href="http://animatedmeme.blogspot.fr/">Animated gifs</a> /
                 <a href="http://www.metalunderground.com/">Favicon</a>
             </p>
 
@@ -852,6 +871,14 @@ echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTo
 
             <p>
                 <a href="https://import.io/">Import.io</a>
+            </p>
+
+            <h5 class="no-caps">Aller plus loin</h5>
+            
+            <p>
+                <a href="http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/index.html">
+                    Elasticsearch, the definitive guide
+                </a>
             </p>
         </section>
     </div>
