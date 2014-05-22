@@ -846,6 +846,70 @@ echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTo
         </section>
 
         <section>
+            <h2 class="no-caps">ProTips ©</h2>
+
+            <h5>En vrac...</h5>
+        </section>
+
+        <section>
+            <h3 class="no-caps">convertRequestToCurlCommand</h3>
+
+            <pre><code class="lang-php">&lt;?php
+use Elastica\Util;
+
+echo Util::convertRequestToCurlCommand(
+    $type->getIndex()->getClient()->getLastRequest()
+);</code></pre>
+
+            <p class="fragment emphasis">curl -XGET 'http://localhost:9200/festival_mapping/hellfest/_search' -d '{"query":{"query_string":{"query":"coucou"}}}'</p>
+        </section>
+
+        <section>
+            <p>
+                Use aliases like a boss
+            </p>
+
+            <p>
+                FOSElasticaBundle, wait for it, refactor complet de l'API, et du coup bof.
+                Pas encore d esupport des aggregations dans les Paginator par exemple.
+            </p>
+
+            <p>
+                Matchez vos ID's avec le champ _id
+            </p>
+
+            <p>
+                Utilisez "fields" si vous n'avez pas besoin de la source (fields:["_id"] c'est parfait)
+            </p>
+
+            <p>
+                use Elastica\Facet as Facets;
+                use Elastica\Filter as Filters;
+            </p>
+
+            <p>
+                Utilisez MultiMatch
+
+                $matching = new Query\MultiMatch();
+                $matching->setQuery($terms);
+                $matching->setFields(array(
+                'valuation.translations.'.$countryCode.'.title',
+                'valuation.translations.'.$countryCode.'.description',
+                ));
+
+                Pas comme moi
+            </p>
+
+            <p>
+                Commencez toujours pas un Bool, même si vous n'avez un seul "must"
+            </p>
+
+            <p>
+                Ne laissez pas vos données dormir dans un data center
+            </p>
+        </section>
+
+        <section>
             <h2>Merci !</h2>
             <h5 class="no-caps">@damienalexandre</h5>
 
@@ -878,7 +942,8 @@ echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTo
             <p>
                 <a href="http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/index.html">
                     Elasticsearch, the definitive guide
-                </a>
+                </a> /
+                <a href="http://rajat404.blogspot.no/2014/05/messing-around-with-elasticsearch.html">Compilation de ressources pour débuter</a>
             </p>
         </section>
     </div>
