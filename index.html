@@ -90,6 +90,8 @@
                 <li>Pro-tips ©</li>
                 <li>Free Hugs.</li>
             </ul>
+
+            <aside class="notes">Début de la conf = découverte, fin = pour les (futur) utilisateurs</aside>
         </section>
 
         <section>
@@ -861,30 +863,79 @@ echo Util::convertRequestToCurlCommand(
     $type->getIndex()->getClient()->getLastRequest()
 );</code></pre>
 
-            <p class="fragment emphasis">curl -XGET 'http://localhost:9200/festival_mapping/hellfest/_search' -d '{"query":{"query_string":{"query":"coucou"}}}'</p>
+            <code class="fragment">curl -XGET 'http://host:9200/index/type/_search' -d '{"query":{"query_string":{"query":"coucou"}}}'</code>
         </section>
 
         <section>
-            <p>
-                Use aliases like a boss
-            </p>
+            <h3 class="no-caps">Désactivez le refresh</h3>
+
+            <p>Pour le gros bourrins du bulk :</p>
+
+            <pre><code class="lang-php">$index->setSettings(array(
+    "refresh_interval" => "-1"
+));</code></pre>
+            <pre class="fragment"><code class="lang-php">$index->setSettings(array(
+    "refresh_interval" => "1s"
+));
+$index->optimize();</code></pre>
+
+            <aside class="notes">Surtout utile si vous attaquez l'index avec plein de workers</aside>
+        </section>
+
+        <section>
+            <h2>Alias</h2>
+
+            <p>Faite toujours pointez vos recherches sur un alias !</p>
+
+            <ul>
+                <li>Gratuit ;</li>
+                <li>Permet de tout ré-indexer ;</li>
+                <li>Permet de changer son mapping ;</li>
+                <li>Recherches multi-index ;</li>
+                <li>Fait briller et ne laisse pas de tâches.</li>
+            </ul>
+        </section>
+
+        <section data-background="images/zombie.jpg">
+            <h2 class="no-caps">Même Rob Zombie trouve ça cool&nbsp;!</h2>
+
+            <aside class="notes">Son vrai nom, c'est Robert, comme le mec des Bidochon. Pas très métal.</aside>
+        </section>
+
+        <section>
+            <h2>Fields</h2>
+
+            <p>Vous pouvez demander uniquement quelques champs de votre <code>source</code>. Voir aucun.</p>
+
+            <pre><code>$query = Query::create($myQuery);
+
+$query->setFields(['_id']);</code></pre>
+        </section>
+
+        <section>
+            <h2>Pretty code</h2>
+
+            <p>This is madness!</p>
+            <pre><code>new \Elastica\Query\Term();
+new \Elastica\Filter\Term();</code></pre>
+
+            <pre class="fragment"><code>use Elastica\Facet as Facets;
+use Elastica\Filter as Filters;
+
+// after
+new Query\Term();
+new Filter\Term();</code></pre>
+        </section>
+
+        <section data-background="images/patch.jpg">
+            <h2 class="no-caps">Ne pas confondre avec une veste a patch.</h2>
+        </section>
+
+        <section>
 
             <p>
                 FOSElasticaBundle, wait for it, refactor complet de l'API, et du coup bof.
                 Pas encore d esupport des aggregations dans les Paginator par exemple.
-            </p>
-
-            <p>
-                Matchez vos ID's avec le champ _id
-            </p>
-
-            <p>
-                Utilisez "fields" si vous n'avez pas besoin de la source (fields:["_id"] c'est parfait)
-            </p>
-
-            <p>
-                use Elastica\Facet as Facets;
-                use Elastica\Filter as Filters;
             </p>
 
             <p>
@@ -928,6 +979,7 @@ echo Util::convertRequestToCurlCommand(
                 <a href="http://sharpwriter.deviantart.com/art/Welcome-to-the-Internet-Please-Follow-me-322248378">Internet unicorn</a> /
                 <a href="http://rodriguezvillegas.deviantart.com/art/Slayer-1-240975635">Slayer</a> /
                 <a href="http://animatedmeme.blogspot.fr/">Animated gifs</a> /
+                <a href="https://www.flickr.com/photos/liftarn/4709787901/">Veste a patch</a> /
                 <a href="http://www.metalunderground.com/">Favicon</a>
             </p>
 
