@@ -177,7 +177,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <img src="./images/github-annoted.png" alt="Github search" class="stretch"/>
 
             <aside class="notes">
-                Mais aussi pagination, suggestion...
+                Mais aussi pagination, suggestion, STATISTIQUES...
             </aside>
         </section>
 
@@ -850,26 +850,86 @@ echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTo
         </section>
 
         <section>
-            <p>Cool, jouer avec aggr et recherche now!</p>
+            <h2>Statistiques</h2>
+
+            <p>Elasticsearch est <strong class="emphasis">aussi</strong> un super moteur de statistiques !</p>
+
+            <ul>
+                <li>Moyenne ;</li>
+                <li>Min/Max ;</li>
+                <li>Cardinalité ;</li>
+                <li>Percentile ;</li>
+                <li>Histogrammes ;</li>
+                <li>Geographique...</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Les aggrégations</h2>
+
+            <p><small>Les facets ne sont pas officiellement dépréciées, mais utilisez les Aggrégations !</small></p>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Concerts par année</h2>
+
+            <pre><code>GET festival/hellfest/_search
+{
+    "size": 0,
+    "aggs": {
+        "by_year": {
+            "terms": {
+                "field": "year",
+                "size": 50
+            }
+        }
+    }
+}</code></pre>
+
+            <p>SELECT COUNT(*) FROM gigs GROUP BY year</p>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Concerts par année</h2>
+
+            <pre><code>$yearsAgg = new \Elastica\Aggregation\Terms("by_year");
+$yearsAgg->setSize(50);
+$yearsAgg->setField('year');
+
+$search = new \Elastica\Query();
+$search->setSize(0);
+$search->addAggregation($yearsAgg);
+
+$results = $type->search($search);
+$years   = $results->getAggregation('by_year');</code></pre>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Doc_count par année !</h2>
+
+            <img src="images/gigs.png" alt="Hellfest gigs by year" class="stretch"/>
+        </section>
+
+        <section>
+            <h1>Excel is so 2002</h1>
+
+            <h3>#YOLO</h3>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Imbriquer les scènes</h2>
+
+            <img src="images/gigs-stages.png" alt="Hellfest gigs by year" class="stretch"/>
+
+            <p>Sky is the limit.</p>
         </section>
 
         <section data-state="prostate">
             <h2 class="no-caps">ProTips ©</h2>
 
             <h5>En vrac...</h5>
-        </section>
 
-        <section data-state="prostate">
-            <h3 class="no-caps">convertRequestToCurlCommand</h3>
-
-            <pre><code class="lang-php">&lt;?php
-use Elastica\Util;
-
-echo Util::convertRequestToCurlCommand(
-    $type->getIndex()->getClient()->getLastRequest()
-);</code></pre>
-
-            <code class="fragment">curl -XGET 'http://host:9200/index/type/_search' -d '{"query":{"query_string":{"query":"coucou"}}}'</code>
+            <img src="images/thumbs.gif" alt="Thumbs up"/>
         </section>
 
         <section data-state="prostate">
@@ -918,6 +978,19 @@ $index->optimize();</code></pre>
 $query->setFields(['_id']);</code></pre>
 
             <p>L'admin réseau pour dira merci.</p>
+        </section>
+
+        <section data-state="prostate">
+            <h3 class="no-caps">convertRequestToCurlCommand</h3>
+
+            <pre><code class="lang-php">&lt;?php
+use Elastica\Util;
+
+echo Util::convertRequestToCurlCommand(
+    $type->getIndex()->getClient()->getLastRequest()
+);</code></pre>
+
+            <code class="fragment">curl -XGET 'http://host:9200/index/type/_search' -d '{"query":{"query_string":{"query":"coucou"}}}'</code>
         </section>
 
         <section data-state="prostate">
@@ -1040,22 +1113,22 @@ $responseArray = $response->getData();</code></pre>
             <h2 class="no-caps">Ne laissez pas vos données dormir dans un datacenter</h2>
 
             <ul class="fragment">
-                <li>Elastica</li>
-                <li>canvas.js (insérez ici votre lib préférée)</li>
+                <li>Elastica ;</li>
+                <li>canvas.js (insérez ici votre lib préférée) ;</li>
                 <li>... ?</li>
-                <li>PROFIT</li>
+                <li>PROFIT !!</li>
             </ul>
+
+            <p class="fragment">Elasticsearch ce n'est pas que de la recherche.</p>
         </section>
 
         <section>
             <h2>Merci !</h2>
-            <h5 class="no-caps">@damienalexandre</h5>
 
-            <h3 class="no-caps">Je n'accepte que les questions formattés en JSON.</h3>
+            <h3 class="no-caps">Je n'accepte que les questions formattées en JSON.</h3>
 
-
-            <p>Todo: Headbang gif</p>
-
+            <img src="images/bye.jpg" alt="Bye!" class="stretch"/>
+            <h5 class="no-caps"><a href="http://twitter.com/damienalexandre">@damienalexandre</a></h5>
         </section>
 
         <section>
@@ -1066,6 +1139,7 @@ $responseArray = $response->getData();</code></pre>
                 <a href="http://sharpwriter.deviantart.com/art/Welcome-to-the-Internet-Please-Follow-me-322248378">Internet unicorn</a> /
                 <a href="http://rodriguezvillegas.deviantart.com/art/Slayer-1-240975635">Slayer</a> /
                 <a href="http://animatedmeme.blogspot.fr/">Animated gifs</a> /
+                <a href="http://giphy.com/">Animated gifs</a> /
                 <a href="https://www.flickr.com/photos/liftarn/4709787901/">Veste a patch</a> /
                 <a href="http://www.metalunderground.com/">Favicon</a>
             </p>
