@@ -91,7 +91,9 @@
                 <li>Free Hugs.</li>
             </ul>
 
-            <aside class="notes">Début de la conf = découverte, fin = pour les (futur) utilisateurs</aside>
+            <aside class="notes">Début de la conf = découverte, fin = pour les (futur) utilisateurs.
+
+            Beaucoup de truc que je vais raconter s'applique a ES avec n'importe quel client</aside>
         </section>
 
         <section>
@@ -269,6 +271,10 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
                 <li>Testé, maintenue activement, compatible ES 1.1 ;</li>
                 <li>Interface object par dessus Elasticsearch.</li>
             </ul>
+
+            <aside class="notes">
+                Beaucoup de truc que je vais raconter s'applique a ES avec n'importe quel client
+            </aside>
         </section>
 
         <section>
@@ -847,13 +853,13 @@ echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTo
             <p>Cool, jouer avec aggr et recherche now!</p>
         </section>
 
-        <section>
+        <section data-state="prostate">
             <h2 class="no-caps">ProTips ©</h2>
 
             <h5>En vrac...</h5>
         </section>
 
-        <section>
+        <section data-state="prostate">
             <h3 class="no-caps">convertRequestToCurlCommand</h3>
 
             <pre><code class="lang-php">&lt;?php
@@ -866,7 +872,7 @@ echo Util::convertRequestToCurlCommand(
             <code class="fragment">curl -XGET 'http://host:9200/index/type/_search' -d '{"query":{"query_string":{"query":"coucou"}}}'</code>
         </section>
 
-        <section>
+        <section data-state="prostate">
             <h3 class="no-caps">Désactivez le refresh</h3>
 
             <p>Pour le gros bourrins du bulk :</p>
@@ -882,7 +888,7 @@ $index->optimize();</code></pre>
             <aside class="notes">Surtout utile si vous attaquez l'index avec plein de workers</aside>
         </section>
 
-        <section>
+        <section data-state="prostate">
             <h2>Alias</h2>
 
             <p>Faite toujours pointez vos recherches sur un alias !</p>
@@ -896,13 +902,13 @@ $index->optimize();</code></pre>
             </ul>
         </section>
 
-        <section data-background="images/zombie.jpg">
+        <section data-background="images/zombie.jpg" data-state="prostate">
             <h2 class="no-caps">Même Rob Zombie trouve ça cool&nbsp;!</h2>
 
             <aside class="notes">Son vrai nom, c'est Robert, comme le mec des Bidochon. Pas très métal.</aside>
         </section>
 
-        <section>
+        <section data-state="prostate">
             <h2>Fields</h2>
 
             <p>Vous pouvez demander uniquement quelques champs de votre <code>source</code>. Voir aucun.</p>
@@ -910,21 +916,124 @@ $index->optimize();</code></pre>
             <pre><code>$query = Query::create($myQuery);
 
 $query->setFields(['_id']);</code></pre>
+
+            <p>L'admin réseau pour dira merci.</p>
         </section>
 
-        <section>
+        <section data-state="prostate">
             <h2>Pretty code</h2>
 
             <p>This is madness!</p>
             <pre><code>new \Elastica\Query\Term();
 new \Elastica\Filter\Term();</code></pre>
 
-            <pre class="fragment"><code>use Elastica\Facet as Facets;
+            <div class="fragment">
+            <p>Bonne utilisation des <code>use</code>.</p>
+
+            <pre><code>use Elastica\Facet as Facets;
 use Elastica\Filter as Filters;
 
 // after
 new Query\Term();
 new Filter\Term();</code></pre>
+            </div>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Trop de match ?</h2>
+
+            <pre><code>$matching = new \Elastica\Query\Bool();
+$matchQuery = new \Elastica\Query\Match();
+$matchQuery->setField('name', $terms);
+$mathing->addShould($matchQuery);
+
+$matchQuery = new \Elastica\Query\Match();
+$matchQuery->setField('pays', $terms);
+$mathing->addShould($matchQuery);
+
+$matchQuery = new \Elastica\Query\Match();
+$matchQuery->setField('bio', $terms);
+$mathing->addShould($matchQuery);
+
+$matchQuery = new \Elastica\Query\Match();
+$matchQuery->setField('job', $terms);
+$mathing->addShould($matchQuery);</code></pre>
+        </section>
+        <section data-state="prostate">
+            <h2 class="no-caps">Utilisez MultiMatch \o/</h2>
+
+            <pre><code>$matching = new Query\MultiMatch();
+$matching->setQuery($terms);
+$matching->setParam('use_dis_max', false);
+$matching->setFields(array(
+    'name',
+    'bio',
+    'pays',
+    'job',
+));</code></pre>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Supporte les boosts</h2>
+
+            <pre><code>$matching = new Query\MultiMatch();
+$matching->setQuery($terms);
+$matching->setParam('use_dis_max', false);
+$matching->setFields(array(
+    'name^10',
+    'bio^4',
+    'pays',
+    'job',
+));</code></pre>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Abusez de Bool</h2>
+
+            <pre><code>new Query\Bool();</code></pre>
+
+            <p>
+                Toujours utile pour ajouter des <code>must</code> ou <code>must_not</code> à la volée&nbsp;!
+            </p>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Utiliser JSON</h2>
+
+            <p>Pour tester c'est bien mieux de copier/coller la doc&nbsp;!</p>
+
+            <pre><code>$query = '{"query": {"match_all": {}}}';
+
+$path = $index->getName() . '/' . $type->getName() . '/_search';
+
+$response = $client->request($path, Request::GET, $query);
+$responseArray = $response->getData();</code></pre>
+
+            <p>Pas de ResultSet en retour ☹</p>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Avec Symfony2</h2>
+
+            <p>Utilisez <strong class="emphasis">FOSElasticaBundle</strong> !</p>
+
+            <ul>
+                <li>Un poil en retard (aggregations dans Paginator...) ;</li>
+                <li>Des commandes super utiles ;</li>
+                <li>Liaison automatique entités => document ES ;</li>
+                <li>Logs, debug facilité ;</li>
+                <li>...</li>
+            </ul>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">La documentation</h2>
+
+            <p>Elastica.io ne suffit pas.</p>
+
+            <h4>La doc est cachée <a href="https://github.com/ruflin/Elastica/tree/master/test/lib/Elastica/Test">ici</a></h4>
+
+            <p class="fragment">https://github.com/ruflin/Elastica/tree/master/<span class="emphasis">test/lib/Elastica/Test</span></p>
         </section>
 
         <section data-background="images/patch.jpg">
@@ -939,25 +1048,14 @@ new Filter\Term();</code></pre>
             </p>
 
             <p>
-                Utilisez MultiMatch
-
-                $matching = new Query\MultiMatch();
-                $matching->setQuery($terms);
-                $matching->setFields(array(
-                'valuation.translations.'.$countryCode.'.title',
-                'valuation.translations.'.$countryCode.'.description',
-                ));
-
-                Pas comme moi
-            </p>
-
-            <p>
-                Commencez toujours pas un Bool, même si vous n'avez un seul "must"
-            </p>
-
-            <p>
                 Ne laissez pas vos données dormir dans un data center
             </p>
+
+            <p>
+                Query en JSON aussi
+            </p>
+
+            <p>Thrift</p>
         </section>
 
         <section>

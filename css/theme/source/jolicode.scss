@@ -59,6 +59,13 @@ footer.joli {
   background: rgba(0, 0, 0, 0.6);
 }
 
+.prostate .reveal .state-background {
+  background-image: url('../../images/ribbon-pro.gif');
+  background-position: top right;
+  background-repeat: no-repeat;
+  background-size:250px;
+}
+
 .big-shadow {
   text-shadow: -5px 5px 25px #000,
   5px  -5px 25px #000, 5px 5px 25px #000,
