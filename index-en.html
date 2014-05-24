@@ -41,6 +41,8 @@
             <h3>Recherche « Like a boss » dans ton site</h3>
 
             <img src="images/sherlock.gif" alt="Sherlock!" class="no-border" />
+
+            <p class="footnote"><a href="index-en.html">This slideshow is also available in English!</a></p>
         </section>
 
         <section data-state="jolistate">
@@ -71,39 +73,57 @@
         </section>
 
         <section>
-            <h1>Plan</h1>
+            <h2 class="no-caps">Plan <del>du site</del></h2>
 
             <ul>
-                <li>Todo</li>
+                <li>Qu'est ce que la recherche ;</li>
+                <li>Présentation rapide d'Elasticsearch ;</li>
+                <li>Elastica ♥ et exemples <code style="text-decoration: underline">avec du code !</code>
+                    <ul style="line-height: 0.8em; font-size: 0.8em;">
+                        <li>Fil rouge ;</li>
+                        <li>Indexer ;</li>
+                        <li>Rechercher ;</li>
+                        <li>Définir un mapping ;</li>
+                        <li>Jouer avec les aggrégations.</li>
+                    </ul>
+                </li>
+                <li>Pro-tips ©</li>
+                <li>Free Hugs.</li>
             </ul>
 
-            <p>On a plein de sujets à traiter en 45min.</p>
+            <aside class="notes">Début de la conf = découverte, fin = pour les (futur) utilisateurs.
 
-            <p>La documentation qu'Elastica devrait avoir !</p>
+            Beaucoup de truc que je vais raconter s'applique a ES avec n'importe quel client</aside>
         </section>
 
         <section>
-            <h1>On ne parlera pas de</h1>
+            <h2 class="no-caps">Ce dont nous ne parlerons pas</h2>
 
             <ul>
-                <li>L'installation ;</li>
-                <li>Le monitoring ;</li>
-                <li>Le scaling / les nodes ;</li>
+                <li>L'installation (RTFM) ;</li>
+                <li>Le scaling, les nodes, les shards, les replicas ;</li>
+                <li>Le monitoring, marvel ;</li>
+                <li>L'indexation temps réel ;</li>
+                <li>L'utilisation en PDS ;</li>
+                <li>La conception de requêtes pertinentes ;</li>
+                <li>La mise en production...</li>
             </ul>
 
-            <p>Pas de le temps !</p>
+            <h3>Le temps nous est compté.</h3>
         </section>
 
         <section>
             <h2>La recherche</h2>
 
-            <h3>Les <abbr title="Système de gestion de base de données">SGBD</abbr> ne savent pas faire</h3>
+            <h3 class="no-caps">Les <abbr title="Système de gestion de base de données">SGBD</abbr> ne savent pas faire</h3>
+
             <ul>
-                <li>pas d'agrégation ;</li>
                 <li>lenteur proportionnelle à la taille des données ;</li>
                 <li>pertinence complexe à calculer ;</li>
-                <li>pas de scalling ;</li>
+                <li>pas de scalling (vertical seulement) ;</li>
                 <li>index à créer manuellement ;</li>
+                <li>pas d'agrégation ;</li>
+                <li>pas leur boulôt.</li>
             </ul>
         </section>
 
@@ -113,7 +133,7 @@
             <pre><code>"(($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')
 OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
 
-            <blockquote class="fragment">
+            <blockquote>
                 WordPress has killer search baked in. Every word you write is fully searchable […]
             </blockquote>
 
@@ -129,7 +149,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             </aside>
         </section>
 
-        <section>
+        <section data-background="./images/awesome.jpg">
             <h2>Introducing</h2>
 
             <img src="images/elasticsearch.png" alt="Elasticsearch" class="stretch no-border" />
@@ -143,6 +163,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <h2>En 2 mots</h2>
 
             <ul>
+                <li>Lucene on steroïdes ;</li>
                 <li>Stockage de documents JSON sans mapping ;</li>
                 <li>Interface REST ;</li>
                 <li>Distribué et scalable horizontalement ;</li>
@@ -156,19 +177,12 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <img src="./images/github-annoted.png" alt="Github search" class="stretch"/>
 
             <aside class="notes">
-                Mais aussi pagination, suggestion...
+                Mais aussi pagination, suggestion, STATISTIQUES...
             </aside>
         </section>
 
         <section>
-            <h5>Les problèmatiques</h5>
-
-            <h2>Construction des documents</h2>
-
-            <ul>
-                <li>Sérialisation JSON ;</li>
-                <li>Dénormalisation.</li>
-            </ul>
+            <h2>Documents JSON</h2>
 
             <pre><code>{
     "content": "Yolo",
@@ -181,11 +195,18 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             on veut pas exemple le USER dans le FICHIER.</aside>
         </section>
 
+        <section>
+            <h2>Index et type</h2>
+
+            <p>
+                Nous stockons les documents dans des types, eux mêmes inclus dans un index.
+            </p>
+
+            <pre><code>http://localhost:9200/yolo/test/1</code></pre>
+        </section>
 
         <section>
-            <h5>Les problèmatiques</h5>
-
-            <h2>L'indexation</h2>
+            <h2>Indexation via POST</h2>
 
             <pre><code>curl -XPOST "http://localhost:9200/yolo/test/1" -d '
 {
@@ -196,19 +217,12 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
     }
 }'</code></pre>
 
-            <ul>
-                <li>Temps réel ?</li>
-                <li>Combien de temps pour tout réindexer ?</li>
-            </ul>
-
             <aside class="notes">
                 La plus simple reste les espaces, chaque "mot" devient un token.
             </aside>
         </section>
 
         <section>
-            <h5>Les problèmatiques</h5>
-
             <h2>La recherche</h2>
 
             <pre><code>curl -XPOST 'http://localhost:9200/yolo/test/_search?pretty=true' -d '
@@ -217,11 +231,6 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
         "match_all" : {}
     }
 }'</code></pre>
-
-            <ul>
-                <li>Votre mapping va l'influencer ;</li>
-                <li>Utilisation du Query DSL.</li>
-            </ul>
 
             <aside class="notes">
                 Toujours écrire ces requêtes en JSON avant de jouer en PHP.
@@ -262,6 +271,10 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
                 <li>Testé, maintenue activement, compatible ES 1.1 ;</li>
                 <li>Interface object par dessus Elasticsearch.</li>
             </ul>
+
+            <aside class="notes">
+                Beaucoup de truc que je vais raconter s'applique a ES avec n'importe quel client
+            </aside>
         </section>
 
         <section>
@@ -280,12 +293,16 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             </aside>
         </section>
 
+        <section>
+            <h1 class="no-caps">Fil rouge</h1>
+        </section>
+
         <section data-background="./images/hellfest2009.jpg">
             <aside class="notes">Notre fil rouge</aside>
         </section>
 
         <section>
-            <h2 class="no-caps">Notre Document</h2>
+            <h2>Concerts au Hellfest</h2>
 
             <p>Chaque prestation d'un artiste est un document :</p>
 
@@ -332,7 +349,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
 
             <pre><code>composer require ruflin/Elastica dev-master</code></pre>
 
-            <pre><code class="no-highlight">./composer.json has been updated
+            <pre><code class="no-highlight fragment">./composer.json has been updated
 Loading composer repositories with package information
 Updating dependencies (including require-dev)
 - Installing ruflin/elastica (dev-master 62f63df)
@@ -387,9 +404,11 @@ $hellfestType = $festivalIndex->getType('hellfest');</code></pre>
 
 // Slow
 foreach ($gigs as $gig) {
+
     $hellfestType->addDocument(
         new \Elastica\Document('', $gig)
     );
+
 }</code></pre>
 
             <p>Une requête HTTP par Document !</p>
@@ -438,7 +457,7 @@ $hellfestType->addDocuments($docs);</code></pre>
                 <li>http://localhost:9200/_plugin/marvel/sense/</li>
             </ul>
         </section>
-        
+
         <section>
             <img src="images/sense.png" alt="Sense via Marvel" class="stretch"/>
         </section>
@@ -587,43 +606,44 @@ Hellfest 2014</code></pre>
         </section>
 
         <section data-background="images/slayer.jpg">
-            <h2>Conclusion</h2>
-
-            <h5>Slayer est un groupe d'habitués :)</h5>
+            <h2>Slayer est donc un groupe d'habitués :)</h2>
 
             <p class="footnote" style="padding-top: 6em;">Et Elastica c'est facile...</p>
         </section>
 
         <section>
             <h2>Quid de Motörhead ?</h2>
-            
+
             <p>
                 <img src="images/motorhead.gif" alt="Motorhead" class="stretch no-border" style="width: 80%"/>
             </p>
         </section>
 
         <section>
-            <pre><code class="lang-php">$matchQuery->setField('name', 'Motörhead');
-$resultSet = $hellfestType->search($matchQuery);
 
-echo sprintf("Motörhead a fait %d Hellfest\n",
-                $resultSet->getTotalHits());</code></pre>
-
-            <h5 class="fragment">Motörhead a fait 3 Hellfest</h5>
-
-            <pre class="fragment"><code class="lang-php">$matchQuery->setField('name', 'Motorhead');
+            <pre><code class="lang-php">$matchQuery->setField('name', 'Motorhead');
 $resultSet = $hellfestType->search($matchQuery);
 
 echo sprintf("Motorhead a fait %d Hellfest\n",
-                $resultSet->getTotalHits());</code></pre>
+$resultSet->getTotalHits());</code></pre>
 
             <h5 class="fragment">Motorhead a fait 0 Hellfest</h5>
+
+            <pre class="fragment"><code class="lang-php">$matchQuery->setField('name', 'Motörhead');
+$resultSet = $hellfestType->search($matchQuery);
+
+echo sprintf("Motörhead a fait %d Hellfest\n",
+$resultSet->getTotalHits());</code></pre>
+
+            <h5 class="fragment">Motörhead a fait 3 Hellfest</h5>
         </section>
 
         <section>
             <h2>WTF</h2>
 
             <h3 class="no-caps emphasis">Motorhead != Motörhead</h3>
+
+            <img src="images/wtf.gif" alt="wtf" class="no-border" style="width: 80%" />
         </section>
 
         <section data-background="images/lords.jpg">
@@ -664,6 +684,8 @@ echo sprintf("Motorhead a fait %d Hellfest\n",
                 <li>Analyse par défaut: [motörhead]</li>
                 <li>Analyse avec asciifolding: [motorhead]</li>
             </ul>
+
+            <h5 class="no-caps" style="margin-top: 1em;">À appliquer à l'indexation <span class="emphasis">ET</span> à la recherche.</h5>
         </section>
 
         <section>
@@ -703,7 +725,7 @@ $mapping->setProperties(array(
       'boost'         => 3
   ),
   'description'   => array('type' => 'string', 'analyzer' => 'my_awesome_analyzer'),
-  'tag'           => array('type' => 'string', 'boost' => 2, 'index' => 'not_analyzed'),
+  'tags'          => array('type' => 'string', 'boost' => 2, 'index' => 'not_analyzed'),
 ));
 
 $mapping->send();</code></pre>
@@ -715,27 +737,410 @@ $mapping->send();</code></pre>
 $resultSet = $hellfestType->search($matchQuery);
 
 echo sprintf("Motorhead a fait %d Hellfest\n",
-$resultSet->getTotalHits());</code></pre>
+    $resultSet->getTotalHits());</code></pre>
 
             <h5>Motorhead a fait 3 Hellfest <span class="no-caps">\m/</span></h5>
         </section>
 
         <section>
+            <h2>Recherche par goût</h2>
+
+            <p>
+                J'aime le <strong class="emphasis">progressive metal</strong> mais je déteste
+                le <strong class="emphasis">grindcore</strong>,
+                quel groupe dois-je aller voir en 2014&nbsp;?
+            </p>
+        </section>
+
+        <section>
+            <h2>Rappel du mapping</h2>
+
+            <pre><code class="lang-php">'tags' => array(
+    'type' => 'string',
+    'boost' => 2,
+    'index' => 'not_analyzed'
+),</code></pre>
+
+            <p>
+                <strong class="emphasis">not_analyzed</strong> est parfait pour un tag.
+            </p>
+        </section>
+
+        <section>
+            <h2>Plein de Query</h2>
+
+            <ul>
+                <li>Possède <strong class="emphasis">progressive metal</strong> dans le champ <strong class="emphasis">tags</strong> ;</li>
+                <li>Ne possède pas <strong class="emphasis">grindcore</strong> dans le champ <strong class="emphasis">tags</strong> ;</li>
+                <li>Possède <strong class="emphasis">2014</strong> dans le champ <strong class="emphasis">year</strong>.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Term Query</h2>
+
+            <pre><code class="lang-json">{
+  "term": {
+    "tags": {
+      "value": "progressive metal"
+    }
+  }
+}</code></pre>
+
+            <pre><code class="lang-json">{
+  "term": {
+    "year": {
+      "value": 2014
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Bool Query</h2>
+
+            <pre><code class="lang-json">{
+    "bool": {
+        "must": [
+            // Queries to match
+        ],
+        "must_not": [
+            // Queries to not match
+        ]
+    }
+}</code></pre>
+        </section>
+
+        <section>
+            <h3>Traduction avec Elastica</h3>
+            <pre><code class="lang-php">$progressiv = new \Elastica\Query\Term(array(
+    'tags' => array('value' => 'progressive metal')
+));
+
+$year = new \Elastica\Query\Term(array(
+    'year' => array('value' => 2014)
+));
+
+$grindcore = new \Elastica\Query\Term(array(
+    'tags' => array('value' => 'grindcore')
+));</code></pre>
+            <pre><code class="lang-php">$boolQuery = new \Elastica\Query\Bool();
+
+$boolQuery->addMust($progressiv);
+$boolQuery->addMust($year);
+$boolQuery->addMustNot($grindcore);
+
+$resultSet = $hellfestMappingType->search($boolQuery);
+echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTotalHits(), 2014);
+</code></pre>
+        </section>
+
+        <section>
+            <ol>
+                <li>Angra</li>
+                <li>Enslaved</li>
+                <li>Opeth</li>
+                <li>Protest the Hero</li>
+                <li>Sólstafir</li>
+            </ol>
+
+            <p>
+                <img src="images/headbang.gif" alt="Headbang!!" class="no-border" style="width: 80%" />
+            </p>
+        </section>
+
+        <section>
+            <h2>Statistiques</h2>
+
+            <p>Elasticsearch est <strong class="emphasis">aussi</strong> un super moteur de statistiques !</p>
+
+            <ul>
+                <li>Moyenne ;</li>
+                <li>Min/Max ;</li>
+                <li>Cardinalité ;</li>
+                <li>Percentile ;</li>
+                <li>Histogrammes ;</li>
+                <li>Geographique...</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Les aggrégations</h2>
+
+            <p><small>Les facets ne sont pas officiellement dépréciées, mais utilisez les Aggrégations !</small></p>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Concerts par année</h2>
+
+            <pre><code>GET festival/hellfest/_search
+{
+    "size": 0,
+    "aggs": {
+        "by_year": {
+            "terms": {
+                "field": "year",
+                "size": 50
+            }
+        }
+    }
+}</code></pre>
+
+            <p>SELECT COUNT(*) FROM gigs GROUP BY year</p>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Concerts par année</h2>
+
+            <pre><code>$yearsAgg = new \Elastica\Aggregation\Terms("by_year");
+$yearsAgg->setSize(50);
+$yearsAgg->setField('year');
+
+$search = new \Elastica\Query();
+$search->setSize(0);
+$search->addAggregation($yearsAgg);
+
+$results = $type->search($search);
+$years   = $results->getAggregation('by_year');</code></pre>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Doc_count par année !</h2>
+
+            <img src="images/gigs.png" alt="Hellfest gigs by year" class="stretch"/>
+        </section>
+
+        <section>
+            <h1>Excel is so 2002</h1>
+
+            <h3>#YOLO</h3>
+        </section>
+
+        <section>
+            <h2 class="no-caps">Imbriquer les scènes</h2>
+
+            <img src="images/gigs-stages.png" alt="Hellfest gigs by year" class="stretch"/>
+
+            <p>Sky is the limit.</p>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">ProTips ©</h2>
+
+            <h5>En vrac...</h5>
+
+            <img src="images/thumbs.gif" alt="Thumbs up"/>
+        </section>
+
+        <section data-state="prostate">
+            <h3 class="no-caps">Désactivez le refresh</h3>
+
+            <p>Pour le gros bourrins du bulk :</p>
+
+            <pre><code class="lang-php">$index->setSettings(array(
+    "refresh_interval" => "-1"
+));</code></pre>
+            <pre class="fragment"><code class="lang-php">$index->setSettings(array(
+    "refresh_interval" => "1s"
+));
+$index->optimize();</code></pre>
+
+            <aside class="notes">Surtout utile si vous attaquez l'index avec plein de workers</aside>
+        </section>
+
+        <section data-state="prostate">
+            <h2>Alias</h2>
+
+            <p>Faite toujours pointez vos recherches sur un alias !</p>
+
+            <ul>
+                <li>Gratuit ;</li>
+                <li>Permet de tout ré-indexer ;</li>
+                <li>Permet de changer son mapping ;</li>
+                <li>Recherches multi-index ;</li>
+                <li>Fait briller et ne laisse pas de tâches.</li>
+            </ul>
+        </section>
+
+        <section data-background="images/zombie.jpg" data-state="prostate">
+            <h2 class="no-caps">Même Rob Zombie trouve ça cool&nbsp;!</h2>
+
+            <aside class="notes">Son vrai nom, c'est Robert, comme le mec des Bidochon. Pas très métal.</aside>
+        </section>
+
+        <section data-state="prostate">
+            <h2>Fields</h2>
+
+            <p>Vous pouvez demander uniquement quelques champs de votre <code>source</code>. Voir aucun.</p>
+
+            <pre><code>$query = Query::create($myQuery);
+
+$query->setFields(['_id']);</code></pre>
+
+            <p>L'admin réseau pour dira merci.</p>
+        </section>
+
+        <section data-state="prostate">
+            <h3 class="no-caps">convertRequestToCurlCommand</h3>
+
+            <pre><code class="lang-php">&lt;?php
+use Elastica\Util;
+
+echo Util::convertRequestToCurlCommand(
+    $type->getIndex()->getClient()->getLastRequest()
+);</code></pre>
+
+            <code class="fragment">curl -XGET 'http://host:9200/index/type/_search' -d '{"query":{"query_string":{"query":"coucou"}}}'</code>
+        </section>
+
+        <section data-state="prostate">
+            <h2>Pretty code</h2>
+
+            <p>This is madness!</p>
+            <pre><code>new \Elastica\Query\Term();
+new \Elastica\Filter\Term();</code></pre>
+
+            <div class="fragment">
+            <p>Bonne utilisation des <code>use</code>.</p>
+
+            <pre><code>use Elastica\Facet as Facets;
+use Elastica\Filter as Filters;
+
+// after
+new Query\Term();
+new Filter\Term();</code></pre>
+            </div>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Trop de match ?</h2>
+
+            <pre><code>$matching = new \Elastica\Query\Bool();
+$matchQuery = new \Elastica\Query\Match();
+$matchQuery->setField('name', $terms);
+$mathing->addShould($matchQuery);
+
+$matchQuery = new \Elastica\Query\Match();
+$matchQuery->setField('pays', $terms);
+$mathing->addShould($matchQuery);
+
+$matchQuery = new \Elastica\Query\Match();
+$matchQuery->setField('bio', $terms);
+$mathing->addShould($matchQuery);
+
+$matchQuery = new \Elastica\Query\Match();
+$matchQuery->setField('job', $terms);
+$mathing->addShould($matchQuery);</code></pre>
+        </section>
+        <section data-state="prostate">
+            <h2 class="no-caps">Utilisez MultiMatch \o/</h2>
+
+            <pre><code>$matching = new Query\MultiMatch();
+$matching->setQuery($terms);
+$matching->setParam('use_dis_max', false);
+$matching->setFields(array(
+    'name',
+    'bio',
+    'pays',
+    'job',
+));</code></pre>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Supporte les boosts</h2>
+
+            <pre><code>$matching = new Query\MultiMatch();
+$matching->setQuery($terms);
+$matching->setParam('use_dis_max', false);
+$matching->setFields(array(
+    'name^10',
+    'bio^4',
+    'pays',
+    'job',
+));</code></pre>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Abusez de Bool</h2>
+
+            <pre><code>new Query\Bool();</code></pre>
+
+            <p>
+                Toujours utile pour ajouter des <code>must</code> ou <code>must_not</code> à la volée&nbsp;!
+            </p>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Utiliser JSON</h2>
+
+            <p>Pour tester c'est bien mieux de copier/coller la doc&nbsp;!</p>
+
+            <pre><code>$query = '{"query": {"match_all": {}}}';
+
+$path = $index->getName() . '/' . $type->getName() . '/_search';
+
+$response = $client->request($path, Request::GET, $query);
+$responseArray = $response->getData();</code></pre>
+
+            <p>Pas de ResultSet en retour ☹</p>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Avec Symfony2</h2>
+
+            <p>Utilisez <strong class="emphasis">FOSElasticaBundle</strong> !</p>
+
+            <ul>
+                <li>Un poil en retard (aggregations dans Paginator...) ;</li>
+                <li>Des commandes super utiles ;</li>
+                <li>Liaison automatique entités => document ES ;</li>
+                <li>Logs, debug facilité ;</li>
+                <li>...</li>
+            </ul>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">La documentation</h2>
+
+            <p>Elastica.io ne suffit pas.</p>
+
+            <h4>La doc est cachée <a href="https://github.com/ruflin/Elastica/tree/master/test/lib/Elastica/Test">ici</a></h4>
+
+            <p class="fragment">https://github.com/ruflin/Elastica/tree/master/<span class="emphasis">test/lib/Elastica/Test</span></p>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Ne laissez pas vos données dormir dans un datacenter</h2>
+
+            <ul class="fragment">
+                <li>Elastica ;</li>
+                <li>canvas.js (insérez ici votre lib préférée) ;</li>
+                <li>... ?</li>
+                <li>PROFIT !!</li>
+            </ul>
+
+            <p class="fragment">Elasticsearch ce n'est pas que de la recherche.</p>
+        </section>
+
+        <section>
             <h2>Merci !</h2>
 
-            <p>Todo: Headbang gif</p>
+            <h3 class="no-caps">Je n'accepte que les questions formattées en JSON.</h3>
+
+            <img src="images/bye.jpg" alt="Bye!" class="stretch"/>
+            <h5 class="no-caps"><a href="http://twitter.com/damienalexandre">@damienalexandre</a></h5>
         </section>
 
         <section>
-            <p>Cool, jouer avec aggr et recherche now!</p>
-        </section>
-
-        <section>
-            <h5 class="no-caps">Crédits</h5>
+            <h5 class="no-caps">Crédits photos</h5>
 
             <p>
                 <a href="http://www.deviantart.com/art/PHP-Weapons-38526422">PHP Weapon</a> /
+                <a href="http://sharpwriter.deviantart.com/art/Welcome-to-the-Internet-Please-Follow-me-322248378">Internet unicorn</a> /
                 <a href="http://rodriguezvillegas.deviantart.com/art/Slayer-1-240975635">Slayer</a> /
+                <a href="http://animatedmeme.blogspot.fr/">Animated gifs</a> /
+                <a href="http://giphy.com/">Animated gifs</a> /
+                <a href="https://www.flickr.com/photos/liftarn/4709787901/">Veste a patch</a> /
                 <a href="http://www.metalunderground.com/">Favicon</a>
             </p>
 
@@ -744,12 +1149,21 @@ $resultSet->getTotalHits());</code></pre>
             <p>
                 <a href="https://import.io/">Import.io</a>
             </p>
+
+            <h5 class="no-caps">Aller plus loin</h5>
+
+            <p>
+                <a href="http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/index.html">
+                    Elasticsearch, the definitive guide
+                </a> /
+                <a href="http://rajat404.blogspot.no/2014/05/messing-around-with-elasticsearch.html">Compilation de ressources pour débuter</a>
+            </p>
         </section>
     </div>
 </div>
 
 <footer class="joli">
-    Elastica, easy search with PHP and Elasticsearch - PHP Tour 2014 - <img src="lib/font/logo-fond-noir.svg" style="height:1em; vertical-align: text-bottom;" /> 2014
+    Elastica, la recherche facile avec PHP et Elasticsearch - PHP Tour 2014 - <img src="lib/font/logo-fond-noir.svg" style="height:1em; vertical-align: text-bottom;" /> 2014
 </footer>
 
 <script src="lib/js/head.min.js"></script>
@@ -784,6 +1198,5 @@ $resultSet->getTotalHits());</code></pre>
     });
 
 </script>
-
 </body>
 </html>
