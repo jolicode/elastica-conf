@@ -35,12 +35,10 @@
 
 <div class="reveal">
     <div class="slides">
-        <section>
+        <section data-background="./images/jumelles.jpg">
             <h1>Elastica</h1>
 
             <h3>Recherche « Like a boss » dans ton site</h3>
-
-            <img src="images/sherlock.gif" alt="Sherlock!" class="no-border" />
 
             <p class="footnote"><a href="index-en.html">This slideshow is also available in English!</a></p>
         </section>
@@ -78,16 +76,15 @@
             <ul>
                 <li>Qu'est ce que la recherche ;</li>
                 <li>Présentation rapide d'Elasticsearch ;</li>
-                <li>Elastica ♥ et exemples <code style="text-decoration: underline">avec du code !</code>
+                <li>Elastica ♥ et exemples <code>avec du code !</code>
                     <ul style="line-height: 0.8em; font-size: 0.8em;">
-                        <li>Fil rouge ;</li>
                         <li>Indexer ;</li>
                         <li>Rechercher ;</li>
                         <li>Définir un mapping ;</li>
                         <li>Jouer avec les aggrégations.</li>
                     </ul>
                 </li>
-                <li>Pro-tips ©</li>
+                <li>Pro-tips © ;</li>
                 <li>Free Hugs.</li>
             </ul>
 
@@ -104,7 +101,7 @@
                 <li>Le scaling, les nodes, les shards, les replicas ;</li>
                 <li>Le monitoring, marvel ;</li>
                 <li>L'indexation temps réel ;</li>
-                <li>L'utilisation en PDS ;</li>
+                <li>L'utilisation en Primary Data Store ;</li>
                 <li>La conception de requêtes pertinentes ;</li>
                 <li>La mise en production...</li>
             </ul>
@@ -123,7 +120,7 @@
                 <li>pas de scalling (vertical seulement) ;</li>
                 <li>index à créer manuellement ;</li>
                 <li>pas d'agrégation ;</li>
-                <li>pas leur boulôt.</li>
+                <li>pas leur boulôt tout simplement.</li>
             </ul>
         </section>
 
@@ -163,9 +160,9 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <h2>En 2 mots</h2>
 
             <ul>
-                <li>Lucene on steroïdes ;</li>
+                <li>Apache Lucene on steroïdes ;</li>
                 <li>Stockage de documents JSON sans mapping ;</li>
-                <li>Interface REST ;</li>
+                <li>Interface REST HTTP ;</li>
                 <li>Distribué et scalable horizontalement ;</li>
                 <li>Open source, en Java <span class="fragment emphasis">¯\_(ツ)_/¯</span></li>
                 <li>Zéro configuration.</li>
@@ -203,19 +200,21 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             </p>
 
             <pre><code>http://localhost:9200/yolo/test/1</code></pre>
+
+            <aside class="notes">Et cela ce reflette dans l'url, on est en REST</aside>
         </section>
 
         <section>
             <h2>Indexation via POST</h2>
 
-            <pre><code>curl -XPOST "http://localhost:9200/yolo/test/1" -d '
-{
+            <pre><code>curl -XPOST "http://localhost:9200/yolo/test/1"</code></pre>
+<pre><code>{
     "post_date": "2013/10/30 13:37:00",
     "content": "Elasticsearch is swag.",
     "author": {
         "name": "Damien",
     }
-}'</code></pre>
+}</code></pre>
 
             <aside class="notes">
                 La plus simple reste les espaces, chaque "mot" devient un token.
@@ -225,12 +224,12 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
         <section>
             <h2>La recherche</h2>
 
-            <pre><code>curl -XPOST 'http://localhost:9200/yolo/test/_search?pretty=true' -d '
-{
+            <pre><code>curl -XPOST "http://localhost:9200/yolo/test/_search"</code></pre>
+            <pre><code>{
     "query": {
         "match_all" : {}
     }
-}'</code></pre>
+}</code></pre>
 
             <aside class="notes">
                 Toujours écrire ces requêtes en JSON avant de jouer en PHP.
@@ -465,8 +464,8 @@ $hellfestType->addDocuments($docs);</code></pre>
         <section>
             <h2>Notre première requête</h2>
 
-            <pre><code class="no-highlight">GET festival/hellfest/_search
-{
+            <pre><code class="no-highlight">GET festival/hellfest/_search</code></pre>
+<pre><code>{
     "query": {
         "match": {
             "name": "slayer"
@@ -531,7 +530,6 @@ $resultSet = $hellfestType->search($matchQuery);</code></pre>
 
         <section>
             <h2>Les réponses</h2>
-            <h5>Même respect de la hiérarchie</h5>
         </section>
 
         <section>
@@ -627,7 +625,7 @@ $resultSet = $hellfestType->search($matchQuery);
 echo sprintf("Motorhead a fait %d Hellfest\n",
 $resultSet->getTotalHits());</code></pre>
 
-            <h5 class="fragment">Motorhead a fait 0 Hellfest</h5>
+            <h5 class="fragment">Motorhead a fait 0 Hellfest (ಠ_ಠ)</h5>
 
             <pre class="fragment"><code class="lang-php">$matchQuery->setField('name', 'Motörhead');
 $resultSet = $hellfestType->search($matchQuery);
@@ -762,12 +760,12 @@ echo sprintf("Motorhead a fait %d Hellfest\n",
 ),</code></pre>
 
             <p>
-                <strong class="emphasis">not_analyzed</strong> est parfait pour un tag.
+                <strong class="emphasis">not_analyzed</strong> est parfait pour un tag, le token === le mot.
             </p>
         </section>
 
         <section>
-            <h2>Plein de Query</h2>
+            <h2>Nos critères</h2>
 
             <ul>
                 <li>Possède <strong class="emphasis">progressive metal</strong> dans le champ <strong class="emphasis">tags</strong> ;</li>
@@ -871,10 +869,10 @@ echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTo
         </section>
 
         <section>
-            <h2 class="no-caps">Concerts par année</h2>
+            <h2 class="no-caps">Concerts par années</h2>
 
-            <pre><code>GET festival/hellfest/_search
-{
+            <pre><code>GET festival/hellfest/_search</code></pre>
+<pre><code>{
     "size": 0,
     "aggs": {
         "by_year": {
@@ -977,7 +975,7 @@ $index->optimize();</code></pre>
 
 $query->setFields(['_id']);</code></pre>
 
-            <p>L'admin réseau pour dira merci.</p>
+            <p>L'admin réseau vous dira merci.</p>
         </section>
 
         <section data-state="prostate">
@@ -1073,7 +1071,7 @@ $matching->setFields(array(
         <section data-state="prostate">
             <h2 class="no-caps">Utiliser JSON</h2>
 
-            <p>Pour tester c'est bien mieux de copier/coller la doc&nbsp;!</p>
+            <p>Pour copier/coller la doc&nbsp;!</p>
 
             <pre><code>$query = '{"query": {"match_all": {}}}';
 
@@ -1168,6 +1166,7 @@ $responseArray = $response->getData();</code></pre>
             <h5 class="no-caps">Crédits photos</h5>
 
             <p>
+                <a href="https://www.flickr.com/photos/darrenberg/12446790684/in/photostream/">Intro</a> /
                 <a href="http://www.deviantart.com/art/PHP-Weapons-38526422">PHP Weapon</a> /
                 <a href="http://sharpwriter.deviantart.com/art/Welcome-to-the-Internet-Please-Follow-me-322248378">Internet unicorn</a> /
                 <a href="http://rodriguezvillegas.deviantart.com/art/Slayer-1-240975635">Slayer</a> /
