@@ -1110,6 +1110,39 @@ $responseArray = $response->getData();</code></pre>
         </section>
 
         <section data-state="prostate">
+            <h2 class="no-caps">Les tests</h2>
+
+            <ul>
+                <li>10 objets en fixtures ne suffisent pas (<a href="http://jailer.sourceforge.net/">Jailer</a>) ;</li>
+                <li>testez la pertinences - vous allez revenir dessus ;</li>
+                <li>testez les cas particulier (Motörhead) ;</li>
+                <li>ne retestez pas Elastica !</li>
+            </ul>
+        </section>
+
+        <section data-state="prostate">
+            <h2 class="no-caps">Travis-Ci</h2>
+
+            <p>
+                <a href="https://github.com/travis-ci/travis-cookbooks/blob/master/ci_environment/elasticsearch/attributes/default.rb">Souvent quelques version de retard</a>
+                sur Elasticsearch : <code>default[:elasticsearch][:version] = "1.1.1"</code>
+            </p>
+
+            <h4>Installez vous même la version de votre choix ! <a
+                    href="https://github.com/ruflin/Elastica/blob/master/test/bin/run_elasticsearch.sh">[exemple]</a>
+            </h4>
+        </section>
+        <section data-state="prostate">
+            <h2 class="no-caps">Travis-Ci</h2>
+
+            <pre><code>env:
+    global:
+      - ES_WAIT_ON_MAPPING_CHANGE=true</code></pre>
+
+            <p>Non documenté mais permet de ne lancer les tests que quand le node est prêt !</p>
+        </section>
+
+        <section data-state="prostate">
             <h2 class="no-caps">Ne laissez pas vos données dormir dans un datacenter</h2>
 
             <ul class="fragment">
