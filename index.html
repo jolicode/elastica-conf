@@ -74,14 +74,14 @@
             <h2 class="no-caps">Plan <del>du site</del></h2>
 
             <ul>
-                <li>Qu'est ce que la recherche ;</li>
+                <li>Qu'est-ce que la recherche ;</li>
                 <li>Présentation rapide d'Elasticsearch ;</li>
                 <li>Elastica ♥ et exemples <code>avec du code !</code>
                     <ul style="line-height: 0.8em; font-size: 0.8em;">
                         <li>Indexer ;</li>
                         <li>Rechercher ;</li>
                         <li>Définir un mapping ;</li>
-                        <li>Jouer avec les aggrégations.</li>
+                        <li>Jouer avec les agrégations.</li>
                     </ul>
                 </li>
                 <li>Pro-tips © ;</li>
@@ -105,8 +105,6 @@
                 <li>La conception de requêtes pertinentes ;</li>
                 <li>La mise en production...</li>
             </ul>
-
-            <h3>Le temps nous est compté.</h3>
         </section>
 
         <section>
@@ -120,7 +118,7 @@
                 <li>pas de scalling (vertical seulement) ;</li>
                 <li>index à créer manuellement ;</li>
                 <li>pas d'agrégation ;</li>
-                <li>pas leur boulôt tout simplement.</li>
+                <li>pas leur boulot tout simplement.</li>
             </ul>
         </section>
 
@@ -160,7 +158,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <h2>En 2 mots</h2>
 
             <ul>
-                <li>Apache Lucene on steroïdes ;</li>
+                <li>Apache Lucene sous stéroïdes ;</li>
                 <li>Stockage de documents JSON sans mapping ;</li>
                 <li>Interface REST HTTP ;</li>
                 <li>Distribué et scalable horizontalement ;</li>
@@ -179,7 +177,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
         </section>
 
         <section>
-            <h2>Documents JSON</h2>
+            <h2>Document JSON</h2>
 
             <pre><code>{
     "content": "Yolo",
@@ -196,7 +194,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <h2>Index et type</h2>
 
             <p>
-                Nous stockons les documents dans des types, eux mêmes inclus dans un index.
+                Nous stockons les documents dans des types, eux-mêmes inclus dans un index.
             </p>
 
             <pre><code>http://localhost:9200/yolo/test/1</code></pre>
@@ -268,7 +266,7 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
                 <li>Créé en octobre 2010 par <span class="emphasis">Nicolas Ruflin</span> ;</li>
                 <li>Documentation sur <a href="http://elastica.io">Elastica.io</a> ;</li>
                 <li>Testé, maintenue activement, compatible ES 1.1 ;</li>
-                <li>Interface object par dessus Elasticsearch.</li>
+                <li>Interface objet par dessus Elasticsearch.</li>
             </ul>
 
             <aside class="notes">
@@ -308,8 +306,8 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             <ul>
                 <li>Édition du festival ;</li>
                 <li>Artiste ;</li>
-                <li>Scéne ;</li>
-                <li>Des métas données sur l'artiste (tags, genre, auditeurs).</li>
+                <li>Scène ;</li>
+                <li>Des métadonnées sur l'artiste (tags, genres, auditeurs).</li>
             </ul>
         </section>
 
@@ -440,7 +438,7 @@ $hellfestType->addDocuments($docs);</code></pre>
             <h2>Recherche</h2>
 
             <ul>
-                <li>Query DSL, 66 pages de docs !</li>
+                <li>Query DSL, 66 pages de documentation !</li>
                 <li>Toujours commencer par la version JSON ;</li>
                 <li>Utilisez Sense pour la conception.</li>
             </ul>
@@ -495,7 +493,7 @@ $festivalIndex = $elasticaClient->getIndex('festival');
 /** @var $hellfestType \Elastica\Type */
 $hellfestType = $festivalIndex->getType('hellfest');</code></pre>
 
-            <p>A rendre disponible sous forme de service dans votre application.</p>
+            <p>À rendre disponible sous forme de service dans votre application.</p>
         </section>
 
         <section>
@@ -746,7 +744,7 @@ echo sprintf("Motorhead a fait %d Hellfest\n",
             <p>
                 J'aime le <strong class="emphasis">progressive metal</strong> mais je déteste
                 le <strong class="emphasis">grindcore</strong>,
-                quel groupe dois-je aller voir en 2014&nbsp;?
+                quels groupes puis-je aller voir en 2014&nbsp;?
             </p>
         </section>
 
@@ -858,18 +856,18 @@ echo sprintf("Il y a %d groupes que tu aime au Hellfest %d\n", $resultSet->getTo
                 <li>Cardinalité ;</li>
                 <li>Percentile ;</li>
                 <li>Histogrammes ;</li>
-                <li>Geographique...</li>
+                <li>Géographique...</li>
             </ul>
         </section>
 
         <section>
-            <h2>Les aggrégations</h2>
+            <h2>Les agrégations</h2>
 
-            <p><small>Les facets ne sont pas officiellement dépréciées, mais utilisez les Aggrégations !</small></p>
+            <p><small>Les facettes ne sont pas officiellement dépréciées, mais utilisez les agrégations !</small></p>
         </section>
 
         <section>
-            <h2 class="no-caps">Concerts par années</h2>
+            <h2 class="no-caps">Concerts par année</h2>
 
             <pre><code>GET festival/hellfest/_search</code></pre>
 <pre><code>{
@@ -911,7 +909,7 @@ $years   = $results->getAggregation('by_year');</code></pre>
         <section>
             <h1>Excel is so 2002</h1>
 
-            <h3>#YOLO</h3>
+            <img src="images/trollface.png" alt="Trollface"/>
         </section>
 
         <section>
@@ -933,7 +931,7 @@ $years   = $results->getAggregation('by_year');</code></pre>
         <section data-state="prostate">
             <h3 class="no-caps">Désactivez le refresh</h3>
 
-            <p>Pour le gros bourrins du bulk :</p>
+            <p>Pour les gros bourrins du bulk :</p>
 
             <pre><code class="lang-php">$index->setSettings(array(
     "refresh_interval" => "-1"
@@ -949,14 +947,14 @@ $index->optimize();</code></pre>
         <section data-state="prostate">
             <h2>Alias</h2>
 
-            <p>Faite toujours pointez vos recherches sur un alias !</p>
+            <p>Faites toujours pointez vos recherches sur un alias !</p>
 
             <ul>
                 <li>Gratuit ;</li>
                 <li>Permet de tout ré-indexer ;</li>
                 <li>Permet de changer son mapping ;</li>
                 <li>Recherches multi-index ;</li>
-                <li>Fait briller et ne laisse pas de tâches.</li>
+                <li>Fait briller et ne laisse pas de tâche.</li>
             </ul>
         </section>
 
@@ -1001,8 +999,8 @@ new \Elastica\Filter\Term();</code></pre>
             <div class="fragment">
             <p>Bonne utilisation des <code>use</code>.</p>
 
-            <pre><code>use Elastica\Facet as Facets;
-use Elastica\Filter as Filters;
+            <pre><code>use Elastica\Query as Query;
+use Elastica\Filter as Filter;
 
 // after
 new Query\Term();
@@ -1011,7 +1009,7 @@ new Filter\Term();</code></pre>
         </section>
 
         <section data-state="prostate">
-            <h2 class="no-caps">Trop de match ?</h2>
+            <h2 class="no-caps">Trop de <code>Match</code> ?</h2>
 
             <pre><code>$matching = new \Elastica\Query\Bool();
 $matchQuery = new \Elastica\Query\Match();
@@ -1031,7 +1029,7 @@ $matchQuery->setField('job', $terms);
 $mathing->addShould($matchQuery);</code></pre>
         </section>
         <section data-state="prostate">
-            <h2 class="no-caps">Utilisez MultiMatch \o/</h2>
+            <h2 class="no-caps">Utilisez <code>MultiMatch</code> \o/</h2>
 
             <pre><code>$matching = new Query\MultiMatch();
 $matching->setQuery($terms);
@@ -1059,7 +1057,7 @@ $matching->setFields(array(
         </section>
 
         <section data-state="prostate">
-            <h2 class="no-caps">Abusez de Bool</h2>
+            <h2 class="no-caps">Abusez de <code>Bool</code></h2>
 
             <pre><code>new Query\Bool();</code></pre>
 
@@ -1069,7 +1067,7 @@ $matching->setFields(array(
         </section>
 
         <section data-state="prostate">
-            <h2 class="no-caps">Utiliser JSON</h2>
+            <h2 class="no-caps">Utilisez JSON</h2>
 
             <p>Pour copier/coller la doc&nbsp;!</p>
 
@@ -1089,9 +1087,9 @@ $responseArray = $response->getData();</code></pre>
             <p>Utilisez <strong class="emphasis">FOSElasticaBundle</strong> !</p>
 
             <ul>
-                <li>Un poil en retard (aggregations dans Paginator...) ;</li>
+                <li>Un poil en retard (agrégations dans Paginator...) ;</li>
                 <li>Des commandes super utiles ;</li>
-                <li>Liaison automatique entités => document ES ;</li>
+                <li>Liaison automatique entité => document ES ;</li>
                 <li>Logs, debug facilité ;</li>
                 <li>...</li>
             </ul>
@@ -1112,8 +1110,8 @@ $responseArray = $response->getData();</code></pre>
 
             <ul>
                 <li>10 objets en fixtures ne suffisent pas (<a href="http://jailer.sourceforge.net/">Jailer</a>) ;</li>
-                <li>testez la pertinences - vous allez revenir dessus ;</li>
-                <li>testez les cas particulier (Motörhead) ;</li>
+                <li>testez la pertinence - vous allez revenir dessus ;</li>
+                <li>testez les cas particuliers (Motörhead) ;</li>
                 <li>ne retestez pas Elastica !</li>
             </ul>
         </section>
@@ -1126,7 +1124,7 @@ $responseArray = $response->getData();</code></pre>
                 sur Elasticsearch : <code>default[:elasticsearch][:version] = "1.1.1"</code>
             </p>
 
-            <h4>Installez vous même la version de votre choix ! <a
+            <h4>Installez vous-même la version de votre choix ! <a
                     href="https://github.com/ruflin/Elastica/blob/master/test/bin/run_elasticsearch.sh">[exemple]</a>
             </h4>
         </section>
@@ -1137,7 +1135,7 @@ $responseArray = $response->getData();</code></pre>
     global:
       - ES_WAIT_ON_MAPPING_CHANGE=true</code></pre>
 
-            <p>Non documenté mais permet de ne lancer les tests que quand le node est prêt !</p>
+            <p>Non documenté, mais permet de ne lancer les tests que sur un node prêt !</p>
         </section>
 
         <section data-state="prostate">
@@ -1150,7 +1148,7 @@ $responseArray = $response->getData();</code></pre>
                 <li>PROFIT !!</li>
             </ul>
 
-            <p class="fragment">Elasticsearch ce n'est pas que de la recherche.</p>
+            <p class="fragment">Elasticsearch, ce n'est pas que de la recherche.</p>
         </section>
 
         <section>
