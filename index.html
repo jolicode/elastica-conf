@@ -114,12 +114,18 @@
 
             <ul>
                 <li>lenteur proportionnelle à la taille des données ;</li>
-                <li>pertinence complexe à calculer ;</li>
-                <li>pas de scalling (vertical seulement) ;</li>
+                <li class="emphasis">pertinence complexe à calculer ;</li>
+                <li class="emphasis">pas de scalling (vertical seulement) ;</li>
                 <li>index à créer manuellement ;</li>
                 <li>pas d'agrégation ;</li>
                 <li>pas leur boulot tout simplement.</li>
             </ul>
+
+            <aside class="notes">
+                Serveurs plus gros = scaller verticalement (limité)<br />
+                Plus de serveurs = scaller horizontalement.<br />
+                Scaller horizontalement une BDD c'est très complexe. ES c'est par défaut!
+            </aside>
         </section>
 
         <section>
@@ -166,6 +172,10 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
                 <li>Zéro configuration.</li>
                 <li class="fragment"><em>Ah et c'est Elasticsearch, pas Elastic<span class="emphasis">S</span>earch.</em></li>
             </ul>
+
+            <aside class="notes">
+                Très bon datastore (NOSQL), gère le versionning, les recherches inversés...
+            </aside>
         </section>
 
         <section>
@@ -286,7 +296,8 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
             </ul>
 
             <aside class="notes">
-                Index=Database, Type=Table, Document=Row
+                Relational DB ⇒ Databases ⇒ Tables ⇒ Rows ⇒ Columns<br />
+                Elasticsearch ⇒ Indices ⇒ Types ⇒ Documents ⇒ Fields
             </aside>
         </section>
 
@@ -339,6 +350,12 @@ OR ($wpdb->posts.post_content LIKE '{$n}{$term}{$n}'))";</code></pre>
 
         <section>
             <h2 class="no-caps">Oubliez vos<br />FOREIGN KEY !</h2>
+
+            <aside class="notes">
+                On travaille en POO, mais on stock comme dans Excel,
+                on perd toute la flexibilité des objets a cause du médium de stockage.<br />
+                ES en PDS c'est possible aussi.
+            </aside>
         </section>
 
         <section>
@@ -442,6 +459,8 @@ $hellfestType->addDocuments($docs);</code></pre>
                 <li>Toujours commencer par la version JSON ;</li>
                 <li>Utilisez Sense pour la conception.</li>
             </ul>
+
+            <aside class="notes">DSL = Domain Specific Language</aside>
         </section>
 
         <section>
@@ -704,7 +723,9 @@ $resultSet->getTotalHits());</code></pre>
 );</pre>
 
             <aside class="notes">
-                Ça se fait au niveau de l'index
+                Ça se fait au niveau de l'index.
+
+                Replica = meilleures perf et redondance.
             </aside>
         </section>
 
